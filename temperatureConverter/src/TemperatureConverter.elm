@@ -5,6 +5,7 @@ import Html.App as Html
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
 import String
+import Utils
 
 
 main : Program Never
@@ -32,15 +33,6 @@ model = {
 
 -- UPDATE
 
-
-celsiusToFahrenheit : Float -> Float
-celsiusToFahrenheit c = 
-    c * (9/5) + 32
-
-fahrenheitToCelsius : Float -> Float 
-fahrenheitToCelsius f = 
-    (f - 32) * (5/9)
-
 type Msg
     = CelsiusChanged String
     | FahrenheitChanged String
@@ -58,7 +50,7 @@ update msg model =
                     { model |
                         celsius = newCelsius, 
                         fahrenheit = celsius 
-                                        |> celsiusToFahrenheit  
+                                        |> Utils.celsiusToFahrenheit  
                                         |> toString
                     }    
         FahrenheitChanged newFahrenheit ->
@@ -71,7 +63,7 @@ update msg model =
                     { model | 
                         fahrenheit = newFahrenheit,
                         celsius = fahrenheit
-                                    |> fahrenheitToCelsius
+                                    |> Utils.fahrenheitToCelsius
                                     |> toString
                     }
 

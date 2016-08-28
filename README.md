@@ -13,7 +13,7 @@ _( Elm, elm-test )_
 > [![](https://raw.githubusercontent.com/wiki/eugenkiss/7guis/images/tempconv.png)](temperatureConverter)
 
 ### 3. Flight Booker
-> ![](https://raw.githubusercontent.com/wiki/eugenkiss/7guis/images/bookflight.png)
+> ![](https://raw.githubusercontent.com/wiki/eugenkiss/7guis/images/bookflight.png)(flightBooker)
 
 ### 4. Timer
 > ![](https://raw.githubusercontent.com/wiki/eugenkiss/7guis/images/timer.png)

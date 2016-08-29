@@ -16,7 +16,7 @@ _( Elm, elm-test )_
 > [![](https://raw.githubusercontent.com/wiki/eugenkiss/7guis/images/bookflight.png)](flightBooker)
 
 ### 4. Timer
-> ![](https://raw.githubusercontent.com/wiki/eugenkiss/7guis/images/timer.png)
+> [![](https://raw.githubusercontent.com/wiki/eugenkiss/7guis/images/timer.png)](timer)
 
 ### 5. CRUD
 > ![](https://raw.githubusercontent.com/wiki/eugenkiss/7guis/images/crud.png)

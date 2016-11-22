@@ -1,7 +1,6 @@
 module Crud exposing (..)
 
 import Html exposing (Html, input, div, select, option, text, button)
-import Html.App as Html
 import Html.Attributes exposing (value, size, style, placeholder, disabled)
 import Html.Events exposing (onInput, onClick, on, targetValue)
 import Json.Decode as Json
@@ -9,7 +8,7 @@ import String
 import Styles
 
 
-main : Program Never
+main : Program Never Model Action
 main =
     Html.beginnerProgram
         { model = initialModel
@@ -230,11 +229,11 @@ createUserForm editUser =
                     baseAttrs
 
                 Just editUser ->
-                    ( value editUser.name :: fst baseAttrs, value editUser.surname :: snd baseAttrs )
+                    ( value editUser.name :: Tuple.first baseAttrs, value editUser.surname :: Tuple.second baseAttrs )
     in
         div [ style Styles.userFormStyles ]
-            [ input (fst inputAttrs) []
-            , input (snd inputAttrs) []
+            [ input (Tuple.first inputAttrs) []
+            , input (Tuple.second inputAttrs) []
             ]
 
 

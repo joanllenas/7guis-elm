@@ -1,12 +1,11 @@
 module Counter exposing (..)
 
 import Html exposing (Html, button, div, span, text)
-import Html.App as Html
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 
 
-main : Program Never
+main : Program Never Model Msg
 main =
     Html.beginnerProgram { model = model, view = view, update = update }
 

@@ -9,8 +9,8 @@ import Utils
 all : Test
 all =
     describe "Test suite"
-        [describe "Utils"
-            [describe "celsiusToFahrenheit"
+        [ describe "Utils"
+            [ describe "celsiusToFahrenheit"
                 [ test "Converts 0 to 32" <|
                     \() ->
                         Expect.equal 32 (Utils.celsiusToFahrenheit 0)
@@ -36,8 +36,8 @@ all =
         , describe "TemperatureConverter"
             [ test "Initial temperature values are an empty string" <|
                 \() ->
-                    let 
-                        model = 
+                    let
+                        model =
                             TemperatureConverter.model
                     in
                         Expect.equal True ("" == model.celsius && "" == model.fahrenheit)
@@ -45,21 +45,21 @@ all =
                 \() ->
                     let
                         newModel =
-                            TemperatureConverter.update (TemperatureConverter.CelsiusChanged "0") {celsius = "", fahrenheit = ""}
+                            TemperatureConverter.update (TemperatureConverter.CelsiusChanged "0") { celsius = "", fahrenheit = "" }
                     in
                         Expect.equal "32" newModel.fahrenheit
             , test "Changing Fahrenheit updates Celsius" <|
                 \() ->
                     let
                         newModel =
-                            TemperatureConverter.update (TemperatureConverter.FahrenheitChanged "32") {celsius = "", fahrenheit = ""}
+                            TemperatureConverter.update (TemperatureConverter.FahrenheitChanged "32") { celsius = "", fahrenheit = "" }
                     in
                         Expect.equal "0" newModel.celsius
             , test "Introducing non numeric values does not update temperature values" <|
                 \() ->
                     let
                         newModel =
-                            TemperatureConverter.update (TemperatureConverter.FahrenheitChanged "32") {celsius = "0", fahrenheit = "32"}
+                            TemperatureConverter.update (TemperatureConverter.FahrenheitChanged "32") { celsius = "0", fahrenheit = "32" }
                     in
                         Expect.equal "0" newModel.celsius
             ]

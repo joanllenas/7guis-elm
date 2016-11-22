@@ -1,7 +1,6 @@
 module FlightBooker exposing (..)
 
 import Html exposing (Html, div, text, button, select, option, input)
-import Html.App as Html
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, on, onInput)
 import Utils
@@ -9,22 +8,21 @@ import Styles
 import Json.Decode as Json
 
 
-
-main : Program Never
+main : Program Never Model Action
 main =
-    Html.beginnerProgram { model = initialModel
-                         , view = view
-                         , update = update 
-                         }
+    Html.beginnerProgram
+        { model = initialModel
+        , view = view
+        , update = update
+        }
 
 
 
 -- MODEL
 
 
-
-type FlightType 
-    = OneWayFlight 
+type FlightType
+    = OneWayFlight
     | ReturnFlight
 
 
@@ -35,7 +33,7 @@ type alias Item =
     }
 
 
-type alias Model = 
+type alias Model =
     { selectedFlightType : FlightType
     , flightTypes : List Item
     , displayBookedMessage : Bool
@@ -45,11 +43,12 @@ type alias Model =
 
 
 initialModel : Model
-initialModel = 
+initialModel =
     { selectedFlightType = OneWayFlight
-    , flightTypes = [ { id = 0, label = "Return Flight", flightType = ReturnFlight }
-                    , { id = 1, label = "One Way Flight", flightType = OneWayFlight }
-                    ]
+    , flightTypes =
+        [ { id = 0, label = "Return Flight", flightType = ReturnFlight }
+        , { id = 1, label = "One Way Flight", flightType = OneWayFlight }
+        ]
     , startDate = "1999/12/31"
     , returnDate = "1999/12/31"
     , displayBookedMessage = False
@@ -60,32 +59,37 @@ initialModel =
 -- UPDATE
 
 
-
 type Action
-    = FlightTypeChanged Int 
-    | StartDateChanged String 
-    | ReturnDateChanged String 
+    = FlightTypeChanged Int
+    | StartDateChanged String
+    | ReturnDateChanged String
     | FlightBooked
 
 
 update : Action -> Model -> Model
-update action model 
-    = case action of
+update action model =
+    case action of
         FlightTypeChanged id ->
-            let 
-                selection = List.filter (\item -> id == item.id) model.flightTypes |> List.head 
-            in 
-                { model | selectedFlightType 
-                    = case selection of 
-                        Nothing -> 
-                            OneWayFlight
-                        Just val ->
-                            val.flightType
+            let
+                selection =
+                    List.filter (\item -> id == item.id) model.flightTypes |> List.head
+            in
+                { model
+                    | selectedFlightType =
+                        case selection of
+                            Nothing ->
+                                OneWayFlight
+
+                            Just val ->
+                                val.flightType
                 }
+
         StartDateChanged dateString ->
             { model | startDate = dateString }
+
         ReturnDateChanged dateString ->
             { model | returnDate = dateString }
+
         FlightBooked ->
             { model | displayBookedMessage = True }
 
@@ -94,55 +98,69 @@ update action model
 -- VIEW
 
 
-
 createFlightOption : FlightType -> Item -> Html Action
-createFlightOption selectedFlightType flightType
-    = option [ value (toString flightType.id)
-             , selected (flightType.flightType == selectedFlightType) ] 
-             [ text flightType.label ]
+createFlightOption selectedFlightType flightType =
+    option
+        [ value (toString flightType.id)
+        , selected (flightType.flightType == selectedFlightType)
+        ]
+        [ text flightType.label ]
 
 
-dateInputStyles : String -> List (String, String)
-dateInputStyles dateString
-    = dateString 
-        |> Utils.isValidDateString 
+dateInputStyles : String -> List ( String, String )
+dateInputStyles dateString =
+    dateString
+        |> Utils.isValidDateString
         |> Styles.dateInputStyles
 
 
 bookButtonDisabled : Model -> Bool
-bookButtonDisabled model 
-    = Utils.anyDateIsInvalid model.startDate model.returnDate || 
-    ( model.selectedFlightType == ReturnFlight 
-    && Utils.stringToTime model.returnDate < Utils.stringToTime model.startDate )
+bookButtonDisabled model =
+    Utils.anyDateIsInvalid model.startDate model.returnDate
+        || (model.selectedFlightType
+                == ReturnFlight
+                && Utils.stringToTime model.returnDate
+                < Utils.stringToTime model.startDate
+           )
 
 
 flightLabel : Model -> String
-flightLabel model
-    = let 
-        selection = List.filter (\item -> model.selectedFlightType == item.flightType) model.flightTypes |> List.head 
-      in 
-        case selection of 
-            Nothing -> "--"
-            Just val -> val.label
+flightLabel model =
+    let
+        selection =
+            List.filter (\item -> model.selectedFlightType == item.flightType) model.flightTypes |> List.head
+    in
+        case selection of
+            Nothing ->
+                "--"
+
+            Just val ->
+                val.label
 
 
 view : Model -> Html Action
 view model =
     div [ style Styles.mainContainerStyles ]
-        [ select [ on "change" (Json.map FlightTypeChanged Utils.targetValueIntDecoder) ] 
-                 (List.map (createFlightOption model.selectedFlightType) model.flightTypes)
-        , input [ value model.startDate
-                , style (dateInputStyles model.startDate)
-                , onInput StartDateChanged
-                ] []
-        , input [ value model.returnDate
-                , style (dateInputStyles model.returnDate)
-                , disabled (model.selectedFlightType == OneWayFlight)
-                , onInput ReturnDateChanged
-                ] []
-        , button [ onClick FlightBooked
-                 , disabled (bookButtonDisabled model) ] 
-                 [ text "Count" ]
-        , div [ style (Styles.messageContainerStyles model.displayBookedMessage) ] 
-              [ text ("You have booked a " ++ (flightLabel model) ++ " flight on " ++ model.startDate) ]
+        [ select [ on "change" (Json.map FlightTypeChanged Utils.targetValueIntDecoder) ]
+            (List.map (createFlightOption model.selectedFlightType) model.flightTypes)
+        , input
+            [ value model.startDate
+            , style (dateInputStyles model.startDate)
+            , onInput StartDateChanged
+            ]
+            []
+        , input
+            [ value model.returnDate
+            , style (dateInputStyles model.returnDate)
+            , disabled (model.selectedFlightType == OneWayFlight)
+            , onInput ReturnDateChanged
+            ]
+            []
+        , button
+            [ onClick FlightBooked
+            , disabled (bookButtonDisabled model)
+            ]
+            [ text "Book" ]
+        , div [ style (Styles.messageContainerStyles model.displayBookedMessage) ]
+            [ text ("You have booked a " ++ (flightLabel model) ++ " flight on " ++ model.startDate) ]
         ]

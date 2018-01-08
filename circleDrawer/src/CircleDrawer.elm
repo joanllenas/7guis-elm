@@ -263,7 +263,7 @@ diameterDialog selectedCircle =
                             , HtmlAttrs.type_ "range"
                             , HtmlAttrs.min "10"
                             , HtmlAttrs.value (toString circle.rad)
-                            , HtmlAttrs.max "500"
+                            , HtmlAttrs.max "200"
                             , HtmlEvt.on "change" rangeValueDecoder
                             ]
                             []

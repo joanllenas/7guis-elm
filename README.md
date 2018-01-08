@@ -22,7 +22,7 @@ _( Elm, elm-test )_
 > [![](https://raw.githubusercontent.com/wiki/eugenkiss/7guis/images/crud.png)](CRUD)
 
 ### 6. Circle Drawer
-> ![](https://raw.githubusercontent.com/wiki/eugenkiss/7guis/images/circledraw.png)
+> [![](https://raw.githubusercontent.com/wiki/eugenkiss/7guis/images/circledraw.png)](circleDrawer)
 
 ### 7. Cells
 > ![](https://raw.githubusercontent.com/wiki/eugenkiss/7guis/images/cells.png)

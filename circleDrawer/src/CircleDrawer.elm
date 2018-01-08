@@ -45,8 +45,8 @@ type alias Circle =
 
 type alias Model =
     { circles : List Circle
-    , undos : List (List Circle)
-    , redos : List (List Circle)
+    , history : List (List Circle)
+    , historyCursor : Int
     , selectedCircle : Maybe Circle
     , lastId : Int
     }
@@ -55,8 +55,8 @@ type alias Model =
 init : ( Model, Cmd Action )
 init =
     ( { circles = []
-      , undos = []
-      , redos = []
+      , history = [ [] ]
+      , historyCursor = 0
       , selectedCircle = Nothing
       , lastId = 1
       }
@@ -92,6 +92,18 @@ findFirstCircleUnderPoint circles coords =
         |> List.head
 
 
+
+{--
+Cursor included.
+allItemsToCursor [1,2,3,4] 2 --> [1,2,3]
+--}
+
+
+allItemsToCursor : List a -> Int -> List a
+allItemsToCursor list cur =
+    List.take (cur + 1) list
+
+
 update : Action -> Model -> ( Model, Cmd Action )
 update action model =
     case action of
@@ -111,10 +123,14 @@ update action model =
 
                         newCircles =
                             List.append model.circles [ createCircle coords (toString newId) ]
+
+                        newHistory =
+                            List.append (allItemsToCursor model.history model.historyCursor) [ newCircles ]
                     in
                     ( { model
                         | circles = newCircles
-                        , undos = List.append model.undos [ model.circles ]
+                        , history = newHistory
+                        , historyCursor = List.length newHistory - 1
                         , lastId = newId
                       }
                     , Cmd.none
@@ -122,11 +138,11 @@ update action model =
 
         UndoClicked ->
             let
-                newUndos =
-                    List.take (List.length model.undos - 1) model.undos
+                newCursor =
+                    model.historyCursor - 1
 
                 newCircles =
-                    List.head (List.drop (List.length model.undos - 1) model.undos)
+                    List.head (List.drop newCursor model.history)
             in
             ( { model
                 | circles =
@@ -136,19 +152,18 @@ update action model =
 
                         Just circles ->
                             circles
-                , undos = newUndos
-                , redos = model.circles :: model.redos
+                , historyCursor = newCursor
               }
             , Cmd.none
             )
 
         RedoClicked ->
             let
-                newRedos =
-                    List.drop 1 model.redos
+                newCursor =
+                    model.historyCursor + 1
 
                 newCircles =
-                    List.head model.redos
+                    List.head (List.drop newCursor model.history)
             in
             ( { model
                 | circles =
@@ -158,14 +173,7 @@ update action model =
 
                         Just circles ->
                             circles
-                , undos =
-                    case newCircles of
-                        Nothing ->
-                            model.undos
-
-                        Just circles ->
-                            List.append model.undos [ circles ]
-                , redos = newRedos
+                , historyCursor = newCursor
               }
             , Cmd.none
             )
@@ -197,7 +205,8 @@ update action model =
                     ( { model
                         | selectedCircle = Just newCircle
                         , circles = newCircles
-                        , undos = List.append model.undos [ newCircles ]
+                        , history = List.append model.history [ newCircles ]
+                        , historyCursor = model.historyCursor + 1
                       }
                     , Cmd.none
                     )
@@ -294,14 +303,15 @@ view model =
         [ div [ HtmlAttrs.style Styles.buttonContainerStyles ]
             [ button
                 [ HtmlEvt.onClick UndoClicked
-                , disabled (List.length model.undos == 0)
+                , disabled (model.historyCursor == 0)
                 ]
-                [ text ("Undo (" ++ toString (List.length model.undos) ++ ")") ]
+                [ text "Undo" ]
+            , text (((model.historyCursor + 1) |> toString) ++ "/" ++ (model.history |> List.length |> toString))
             , button
                 [ HtmlEvt.onClick RedoClicked
-                , disabled (List.length model.redos == 0)
+                , disabled (List.length model.history == model.historyCursor + 1)
                 ]
-                [ text ("Redo (" ++ toString (List.length model.redos) ++ ")") ]
+                [ text "Redo" ]
             ]
         , div [ HtmlAttrs.style Styles.svgContainerStyles ]
             [ svg
